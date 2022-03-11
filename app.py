@@ -1,6 +1,6 @@
 #!venv/bin/python
 from flask import Flask, jsonify, abort, make_response, request
-
+import random
 app = Flask(__name__)
 
 
@@ -85,7 +85,7 @@ def get_promos():
             'name': i['description']
         })
     print(result)
-    return jsonify(result)
+    return jsonify(result), 200
 
 
 @app.route('/promo/<int:promo_id>', methods=['GET'])
@@ -93,7 +93,7 @@ def get_promo(promo_id):
     promo = list(filter(lambda t: t['id'] == promo_id, promos))
     if len(promo) == 0:
         abort(404)
-    return jsonify(promo)
+    return jsonify(promo), 200
 
 
 @app.errorhandler(404)
@@ -144,13 +144,49 @@ def create_prize(promo_id):
     return jsonify(prize), 201
 
 
+"""
+@app.route('/promo/<int:promo_id>/raffle', methods=['POST'])
+def make_raffle(promo_id):
+    promo = get_promo_index(promo_id)
+    print(promos[promo]["prizes"])
+    participants = promos[promo]["participants"]
+    print
+    list(random.shuffle(participants))
+    raffle = {
+        "winner": promos[promo]["participants"][random()]
+    }
+    prize = {
+        'id': promos[promo]["prizes"][-1]["id"] + 1,
+        'description': request.json['description']
+    }
+    promos[promo]["prizes"].append(prize)
+    print(promos[promo]["prizes"])
+    return jsonify(prize), 201
+"""
+
+
+@app.route('/promo/<int:promo_id>', methods=['PUT'])
+def update_task(promo_id):
+    promo_ind = get_promo_index(promo_id)
+    if promo_ind is None:
+        abort(404)
+    if not request.json:
+        abort(400)
+    if request.json.get('name', promos[promo_ind]['name']) != "":
+        promos[promo_ind]['name'] = request.json.get('name', promos[promo_ind]['name'])
+    else:
+        abort(400)
+    promos[promo_ind]['description'] = request.json.get('description', promos[promo_ind]['description'])
+    return jsonify(promos[promo_ind]), 201
+
+
 @app.route('/promo/<int:promo_id>', methods=['DELETE'])
 def delete_task(promo_id):
     promo = list(filter(lambda t: t['id'] == promo_id, promos))
     if len(promo) == 0:
         abort(404)
     promos.remove(promo[0])
-    return jsonify({"Result": "True"})
+    return jsonify({"Result": "True"}), 200
 
 
 @app.route('/promo/<int:promo_id>/participant/<int:participant_id>', methods=['DELETE'])
@@ -163,7 +199,7 @@ def delete_participant(participant_id, promo_id):
     print(participant)
     promos[promo]["participants"].remove(participant[0])
     print(promos[promo]["participants"])
-    return jsonify({"result": "True"})
+    return jsonify({"result": "True"}), 200
 
 
 def get_promo_index(promo_id):
@@ -171,7 +207,7 @@ def get_promo_index(promo_id):
         if i['id'] == promo_id:
             return list(promos).index(i)
 
-    abort(404)
+    abort(400)
 
 
 @app.route('/promo/<int:promo_id>/prize/<int:prize_id>', methods=['DELETE'])
@@ -184,7 +220,7 @@ def delete_prize(prize_id, promo_id):
     print(prize)
     promos[promo]["prizes"].remove(prize[0])
 
-    return jsonify({"result": "True"})
+    return jsonify({"result": "True"}), 200
 
 
 if __name__ == '__main__':
