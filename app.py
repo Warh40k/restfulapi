@@ -143,18 +143,33 @@ def create_prize(promo_id):
     print(promos[promo]["prizes"])
     return jsonify(prize), 201
 
-
 """
 @app.route('/promo/<int:promo_id>/raffle', methods=['POST'])
 def make_raffle(promo_id):
     promo = get_promo_index(promo_id)
     print(promos[promo]["prizes"])
+    if len(promos[promo]["participants"]) != len(promos[promo]["prizes"]):
+        abort(400)
     participants = promos[promo]["participants"]
-    print
-    list(random.shuffle(participants))
-    raffle = {
-        "winner": promos[promo]["participants"][random()]
-    }
+    print(type(participants))
+    random.shuffle(participants)
+    print(participants)
+    raffle=[]
+    for i in range(participants):
+    raffle =[
+        {
+        "winner": {
+            "id": participants[0]['id'],
+            "name": participants[0]['name']
+            },
+        "prize":
+            {
+            'id': promos[promo]["prizes"][0]["id"],
+            'description':promos[promo]["prizes"][0]["id"]
+            }
+        }
+
+    ]
     prize = {
         'id': promos[promo]["prizes"][-1]["id"] + 1,
         'description': request.json['description']
