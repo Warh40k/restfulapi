@@ -129,6 +129,21 @@ def create_participant(promo_id):
     return jsonify(participant), 201
 
 
+@app.route('/promo/<int:promo_id>/prize', methods=['POST'])
+def create_prize(promo_id):
+    if not request.json or not 'description' in request.json:
+        abort(400)
+    promo = get_promo_index(promo_id)
+    print(promos[promo]["prizes"])
+    prize = {
+        'id': promos[promo]["prizes"][-1]["id"] + 1,
+        'description': request.json['description']
+    }
+    promos[promo]["prizes"].append(prize)
+    print(promos[promo]["prizes"])
+    return jsonify(prize), 201
+
+
 @app.route('/promo/<int:promo_id>', methods=['DELETE'])
 def delete_task(promo_id):
     promo = list(filter(lambda t: t['id'] == promo_id, promos))
