@@ -132,15 +132,15 @@ def get_promo_index(promo_id):
 
 
 @app.route('/promo/<int:promo_id>/prize/<int:prize_id>', methods=['DELETE'])
-def delete_participant(participant_id, promo_id):
+def delete_prize(prize_id, promo_id):
     promo = get_promo_index(promo_id)
     print(promo)
-    participant = list(filter(lambda t: t['id'] == participant_id, promos[promo]['participants']))
-    if len(participant) == 0:
+    prize = list(filter(lambda t: t['id'] == prize_id, promos[promo]['prizes']))
+    if len(prize) == 0:
         abort(404)
-    print(participant)
-    promos[promo_id]["participants"].remove(participant[0])
-    print(promos[promo_id]["participants"])
+    print(prize)
+    promos[promo]["prizes"].remove(prize[0])
+
     return jsonify({"result": "True"})
 
 
