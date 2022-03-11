@@ -101,6 +101,19 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+@app.route('/promo', methods=['POST'])
+def create_promo():
+    if not request.json or not 'name' in request.json:
+        abort(400)
+    promo = {
+        'id': promos[-1]['id'] + 1,
+        'name': request.json['name'],
+        'description': request.json.get('description', ""),
+    }
+    promos.append(promo)
+    return jsonify({'task': promo}), 201
+
+
 @app.route('/promo/<int:promo_id>', methods=['DELETE'])
 def delete_task(promo_id):
     promo = list(filter(lambda t: t['id'] == promo_id, promos))
