@@ -111,7 +111,22 @@ def create_promo():
         'description': request.json.get('description', ""),
     }
     promos.append(promo)
-    return jsonify({'task': promo}), 201
+    return jsonify(promo), 201
+
+
+@app.route('/promo/<int:promo_id>/participant', methods=['POST'])
+def create_participant(promo_id):
+    if not request.json or not 'name' in request.json:
+        abort(400)
+    promo = get_promo_index(promo_id)
+    print(promos[promo]["participants"])
+    participant = {
+        'id': promos[promo]["participants"][-1]["id"] + 1,
+        'name': request.json['name']
+    }
+    promos[promo]["participants"].append(participant)
+    print(promos[promo]["participants"])
+    return jsonify(participant), 201
 
 
 @app.route('/promo/<int:promo_id>', methods=['DELETE'])
@@ -131,8 +146,8 @@ def delete_participant(participant_id, promo_id):
     if len(participant) == 0:
         abort(404)
     print(participant)
-    promos[promo_id]["participants"].remove(participant[0])
-    print(promos[promo_id]["participants"])
+    promos[promo]["participants"].remove(participant[0])
+    print(promos[promo]["participants"])
     return jsonify({"result": "True"})
 
 
