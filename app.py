@@ -77,7 +77,15 @@ promos = [
 
 @app.route('/promo', methods=['GET'])
 def get_promos():
-    return jsonify({'promo': promos})
+    result = []
+    for i in promos:
+        result.append(
+        {
+            'description': i['name'],
+            'name': i['description']
+        })
+    print(result)
+    return jsonify(result)
 
 
 @app.route('/promo/<int:promo_id>', methods=['GET'])
@@ -85,7 +93,7 @@ def get_promo(promo_id):
     promo = list(filter(lambda t: t['id'] == promo_id, promos))
     if len(promo) == 0:
         abort(404)
-    return jsonify({'promo': promo})
+    return jsonify(promo)
 
 
 @app.errorhandler(404)
@@ -121,6 +129,19 @@ def get_promo_index(promo_id):
             return list(promos).index(i)
 
     abort(404)
+
+
+@app.route('/promo/<int:promo_id>/prize/<int:prize_id>', methods=['DELETE'])
+def delete_participant(participant_id, promo_id):
+    promo = get_promo_index(promo_id)
+    print(promo)
+    participant = list(filter(lambda t: t['id'] == participant_id, promos[promo]['participants']))
+    if len(participant) == 0:
+        abort(404)
+    print(participant)
+    promos[promo_id]["participants"].remove(participant[0])
+    print(promos[promo_id]["participants"])
+    return jsonify({"result": "True"})
 
 
 if __name__ == '__main__':
