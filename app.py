@@ -7,7 +7,7 @@ app = Flask(__name__)
 promos = [
     {
         'id': 1,
-        'name': u'Milk hatred',
+        'name': u'Milk contest',
         'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
         'prizes': [
             {
@@ -16,7 +16,7 @@ promos = [
             },
             {
                 'id': 2,
-                'description': "Cookish"
+                'description': "Cheese"
             }
         ],
         "participants": [
@@ -52,7 +52,7 @@ promos = [
                 "prize":
                     {
                         "id": 2,
-                        "description": "Cookish"
+                        "description": "Cheese"
                     }
             }
         ],
